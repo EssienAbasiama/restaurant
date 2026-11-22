@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { createContext, useCallback, useContext, useRef } from "react";
 import { gsap, ScrollTrigger, reducedMotion } from "@/lib/gsap";
 import { getLenis, scrollToTarget } from "./SmoothScroll";
 import { site } from "@/lib/site";
+import { RouteWatcher } from "./RouteWatcher";
 
 type Ctx = { go: (href: string) => void };
 const TransitionCtx = createContext<Ctx>({ go: () => {} });
@@ -28,7 +29,6 @@ const PANELS = [
 
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
   const curtain = useRef<HTMLDivElement>(null);
   const pending = useRef<string | null>(null);
   const busy = useRef(false);
@@ -89,12 +89,13 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       .to(panels, { yPercent: 101, duration: 0.7, ease: "power3.inOut", stagger: 0.05 }, "<");
   }, []);
 
-  useEffect(() => {
+  const onRoute = useCallback(() => {
     if (pending.current) reveal();
-  }, [pathname, reveal]);
+  }, [reveal]);
 
   return (
     <TransitionCtx.Provider value={{ go }}>
+      <RouteWatcher onChange={onRoute} />
       {children}
       <div ref={curtain} aria-hidden className="pointer-events-none invisible fixed inset-0 z-[80] flex">
         {PANELS.map(([a, b, c], i) => (
