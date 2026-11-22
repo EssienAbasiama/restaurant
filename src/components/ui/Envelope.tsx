@@ -42,7 +42,7 @@ export function WaxSeal({ size = 56, className, half }: { size?: number; classNa
   );
 }
 
-export type EnvelopeHandle = { open: () => Promise<void>; close: () => Promise<void> };
+export type EnvelopeHandle = { open: () => Promise<void>; close: () => Promise<void>; setOpen: () => void };
 
 type Props = {
   width?: number;
@@ -99,7 +99,14 @@ export const Envelope = forwardRef<EnvelopeHandle, Props>(function Envelope(
         .to(root.current, { scaleY: 0.94, scaleX: 1.04, duration: 0.08, yoyo: true, repeat: 1, ease: "power1.out" });
     });
 
-  useImperativeHandle(ref, () => ({ open, close }));
+  /** Jump straight to the opened state (letter out, seal gone). */
+  const setOpen = () => {
+    gsap.set([q(".env-seal-full"), q(".env-seal-l"), q(".env-seal-r")], { autoAlpha: 0 });
+    gsap.set(q(".env-flap"), { rotateX: 180, zIndex: 1 });
+    gsap.set(q(".env-letter"), { y: -h * 0.72 });
+  };
+
+  useImperativeHandle(ref, () => ({ open, close, setOpen }));
 
   const hover = (on: boolean) => {
     if (!interactive || busy.current || reducedMotion()) return;
