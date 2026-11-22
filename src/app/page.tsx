@@ -1,10 +1,25 @@
 import { Hero } from "@/components/home/Hero";
+import { Marquee } from "@/components/home/Marquee";
+import { Manifesto } from "@/components/home/Manifesto";
+import { BuildAPlate } from "@/components/home/BuildAPlate";
+import { Craft } from "@/components/home/Craft";
+import { Gallery } from "@/components/home/Gallery";
+import { Reviews } from "@/components/home/Reviews";
+import { Visit } from "@/components/home/Visit";
+import { Footer } from "@/components/shell/Footer";
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <div className="h-screen" />
+      <Marquee />
+      <Manifesto />
+      <BuildAPlate />
+      <Craft />
+      <Gallery />
+      <Reviews />
+      <Visit />
+      <Footer />
     </main>
   );
 }
