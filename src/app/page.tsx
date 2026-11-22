@@ -2,6 +2,7 @@ import { Hero } from "@/components/home/Hero";
 import { Marquee } from "@/components/home/Marquee";
 import { Manifesto } from "@/components/home/Manifesto";
 import { BuildAPlate } from "@/components/home/BuildAPlate";
+import { Belt } from "@/components/home/Belt";
 import { Craft } from "@/components/home/Craft";
 import { Gallery } from "@/components/home/Gallery";
 import { Reviews } from "@/components/home/Reviews";
@@ -15,6 +16,7 @@ export default function Home() {
       <Marquee />
       <Manifesto />
       <BuildAPlate />
+      <Belt />
       <Craft />
       <Gallery />
       <Reviews />
