@@ -10,7 +10,7 @@ export const site = {
   tagline: "Lagos-born. World-fed.",
   description:
     "Àdùn is a (concept) Lagos restaurant where smoky party jollof, egusi and suya share one revolving table with tonkotsu, carbonara and a sushi belt.",
-  url: "https://adun.example",
+  url: "https://adun-rose.vercel.app",
   address: ["Admiralty Way", "Lekki Phase 1, Lagos"],
   email: "hello@adun.example",
   hours: [
@@ -20,8 +20,8 @@ export const site = {
   ],
   beltHours: "The Belt runs daily 12:00 – 17:00",
   author: {
-    name: "Your Name",
-    url: "https://www.linkedin.com/",
+    name: "Essien Abasiama",
+    url: "https://essienabasiama.vercel.app",
   },
   socials: {
     instagram: "https://www.instagram.com/",
