@@ -41,13 +41,13 @@ export function Steam({ className, intensity = 1, play = true }: { className?: s
       <defs>
         <linearGradient id="steam-g" x1="0" y1="1" x2="0" y2="0">
           <stop offset="0" stopColor="#fff" stopOpacity="0" />
-          <stop offset="0.35" stopColor="#fff" stopOpacity="0.95" />
+          <stop offset="0.4" stopColor="#fff" stopOpacity="1" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
       </defs>
       <g className="steam-blur">
         {WISPS.map((d, i) => (
-          <path key={i} className="wisp" d={d} stroke="url(#steam-g)" strokeWidth={i % 2 ? 16 : 22} strokeLinecap="round" fill="none" opacity="0" />
+          <path key={i} className="wisp" d={d} stroke="url(#steam-g)" strokeWidth={i % 2 ? 20 : 28} strokeLinecap="round" fill="none" opacity="0" />
         ))}
       </g>
     </svg>

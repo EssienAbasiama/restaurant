@@ -21,9 +21,9 @@ type Geo = { w: number; h: number; S: number; cx: number; cy: number; R: number;
 function computeGeo(w: number, h: number): Geo {
   const mobile = w < 768;
   const S = mobile ? Math.min(w * 0.74, h * 0.36, 360) : Math.min(h * 0.46, w * 0.31, 480);
-  const cy = mobile ? h * 0.585 : h * 0.6;
+  const cy = mobile ? h * 0.585 : h * 0.62;
   const R = mobile ? Math.max(S * 1.28, w * 0.96) : Math.max(S * 1.4, w * 0.5);
-  return { w, h, S, cx: w / 2, cy, R, ringCy: cy + R, mobile, disc: 2 * (R + S * 0.64) };
+  return { w, h, S, cx: w / 2, cy, R, ringCy: cy + R, mobile, disc: 2 * (R + S * (mobile ? 0.64 : 0.57)) };
 }
 
 const wrap = (a: number) => ((((a + 180) % 360) + 360) % 360) - 180;
@@ -391,7 +391,7 @@ export function Hero() {
       )}
 
       {/* the lazy susan */}
-      <div ref={stage} className="absolute inset-0" style={{ visibility: "hidden" }}>
+      <div ref={stage} className="absolute inset-0 isolate z-[1]" style={{ visibility: "hidden" }}>
         {g && (
           <div
             ref={disc}
