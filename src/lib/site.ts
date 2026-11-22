@@ -20,8 +20,8 @@ export const site = {
   ],
   beltHours: "The Belt runs daily 12:00 – 17:00",
   author: {
-    name: "Your Name",
-    url: "https://www.linkedin.com/",
+    name: "Essien Abasiama",
+    url: "https://essienabasiama.vercel.app",
   },
   socials: {
     instagram: "https://www.instagram.com/",
