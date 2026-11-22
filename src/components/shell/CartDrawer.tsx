@@ -47,7 +47,8 @@ export function CartDrawer() {
       getLenis()?.stop();
       gsap.set([p, s], { visibility: "visible" });
       gsap.to(s, { opacity: 1, duration: 0.4 });
-      gsap.fromTo(p, { xPercent: 105 }, { xPercent: 0, duration: 0.7, ease: "expo.out" });
+      // x: 0 clears the px offset GSAP parses from the inline translateX(105%)
+      gsap.fromTo(p, { x: 0, xPercent: 105 }, { x: 0, xPercent: 0, duration: 0.7, ease: "expo.out" });
       gsap.fromTo(p.querySelectorAll(".cline"), { x: 40, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.05, duration: 0.6, delay: 0.15 });
       closeBtn.current?.focus();
     } else {
