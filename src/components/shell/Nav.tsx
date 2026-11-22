@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { cartCount, useStore } from "@/lib/store";
 import { img } from "@/lib/images";
@@ -11,6 +10,7 @@ import { Logo } from "@/components/ui/Logo";
 import { Bowl, Close, Envelope, Menu } from "@/components/ui/icons";
 import { getLenis } from "./SmoothScroll";
 import { TLink, useGo } from "./Transition";
+import { RouteWatcher } from "./RouteWatcher";
 
 const LINKS = [
   { href: "/menu", label: "Menu", img: img.naijaSpread },
@@ -28,7 +28,6 @@ export function Nav() {
   const cart = useStore((s) => s.cart);
   const setCartOpen = useStore((s) => s.setCartOpen);
   const count = cartCount(cart);
-  const pathname = usePathname();
   const go = useGo();
 
   useEffect(() => {
@@ -49,9 +48,9 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [open]);
 
-  useEffect(() => {
+  const onRoute = useCallback(() => {
     gsap.set(header.current, { yPercent: 0 });
-  }, [pathname]);
+  }, []);
 
   useEffect(() => {
     const el = overlay.current;
@@ -76,6 +75,7 @@ export function Nav() {
 
   return (
     <>
+      <RouteWatcher onChange={onRoute} />
       <header ref={header} className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5">
         <nav
           aria-label="Main"

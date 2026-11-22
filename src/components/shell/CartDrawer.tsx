@@ -65,8 +65,10 @@ export function CartDrawer() {
   }, [open, setOpen]);
 
   useEffect(() => {
-    gsap.to(".cart-progress", { scaleX: pct, duration: 0.8, ease: "expo.out" });
-    gsap.to(".cart-scooter", { left: `${pct * 100}%`, duration: 0.8, ease: "expo.out" });
+    const bar = panel.current?.querySelector(".cart-progress");
+    const scooter = panel.current?.querySelector(".cart-scooter");
+    if (bar) gsap.to(bar, { scaleX: pct, duration: 0.8, ease: "expo.out" });
+    if (scooter) gsap.to(scooter, { left: `${pct * 100}%`, duration: 0.8, ease: "expo.out" });
   }, [pct, open]);
 
   return (
