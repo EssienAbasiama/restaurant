@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap, reducedMotion } from "@/lib/gsap";
 import { useStore, useStoreHydrated } from "@/lib/store";
 import { money } from "@/lib/format";
+import { nowMs } from "@/lib/ids";
 import { site } from "@/lib/site";
 import { DishArt } from "@/components/art/DishArt";
 import { Steam } from "@/components/art/Steam";
@@ -61,9 +62,13 @@ export function OrderTracker() {
   const shownStage = useRef(-1);
 
   useEffect(() => {
-    setNow(Date.now());
-    const id = window.setInterval(() => setNow(Date.now()), 200);
-    return () => window.clearInterval(id);
+    const tick = () => setNow(nowMs());
+    const first = window.setTimeout(tick, 0);
+    const id = window.setInterval(tick, 200);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(id);
+    };
   }, []);
 
   const elapsed = order && now ? (now - order.placedAt) / 1000 : 0;

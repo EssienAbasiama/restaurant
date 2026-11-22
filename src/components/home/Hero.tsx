@@ -69,11 +69,12 @@ export function Hero() {
   const [active, setActive] = useState(0);
   const [settled, setSettled] = useState(false);
   const [intro, setIntro] = useState(false);
-  const [mobileCallout, setMobileCallout] = useState(0);
+  const [mc, setMc] = useState({ a: 0, i: 0 });
   const prevActive = useRef(0);
   const { addSignature } = useOrder();
   const go = useGo();
   const sig = signatures[active];
+  const mobileCallout = mc.a === active ? mc.i : 0;
 
   /* ------------------------- frame render ------------------------- */
   const render = useCallback(() => {
@@ -264,7 +265,6 @@ export function Hero() {
       duration: 0.9,
       ease: "power2.out",
     });
-    setMobileCallout(0);
     if (prev === active || !intro) return;
     const out = titles[prev]?.querySelectorAll(".char") ?? [];
     const inn = titles[active]?.querySelectorAll(".char") ?? [];
@@ -324,7 +324,10 @@ export function Hero() {
   /* mobile: cycle callout captions */
   useEffect(() => {
     if (!geo?.mobile || !settled) return;
-    const id = window.setInterval(() => setMobileCallout((c) => (c + 1) % signatures[activeRef.current].callouts.length), 2200);
+    const id = window.setInterval(() => {
+      const a = activeRef.current;
+      setMc((p) => ({ a, i: p.a === a ? (p.i + 1) % signatures[a].callouts.length : 1 }));
+    }, 2200);
     return () => window.clearInterval(id);
   }, [geo?.mobile, settled, active]);
 

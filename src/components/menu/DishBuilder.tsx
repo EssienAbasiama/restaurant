@@ -72,7 +72,6 @@ export function DishBuilder({ slug }: { slug: string }) {
   const plate = useRef<HTMLDivElement>(null);
   const spinner = useRef<HTMLDivElement>(null);
   const seen = useRef<WeakSet<Element>>(new WeakSet());
-  const priceEl = useRef<HTMLSpanElement>(null);
   const shownPrice = useRef(priceFor(sig, opts) * qty);
   const { addSignature } = useOrder();
   const setCartOpen = useStore((s) => s.setCartOpen);

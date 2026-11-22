@@ -10,7 +10,7 @@ const G = ({ x, y, rot = 0, s = 1, className, children }: Omit<PieceProps, "u" |
 
 /* ------------------------------ generic ------------------------------ */
 
-export function Specks({ u: _u, x, y, r, n, colors, seed = 1, size = [0.8, 1.8], ry }: { u?: string; x: number; y: number; r: number; n: number; colors: string[]; seed?: number; size?: [number, number]; ry?: number }) {
+export function Specks({ x, y, r, n, colors, seed = 1, size = [0.8, 1.8], ry }: { u?: string; x: number; y: number; r: number; n: number; colors: string[]; seed?: number; size?: [number, number]; ry?: number }) {
   const R = rng(seed + 900);
   return (
     <g>
@@ -108,7 +108,7 @@ export function Turkey({ u, x, y, rot, s, seed = 9 }: PieceProps) {
   );
 }
 
-export function Croaker({ u: _u, x, y, rot, s, seed = 5 }: PieceProps) {
+export function Croaker({ x, y, rot, s, seed = 5 }: PieceProps) {
   const R = rng(seed);
   return (
     <G x={x} y={y} rot={rot} s={s}>

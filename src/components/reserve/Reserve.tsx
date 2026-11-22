@@ -10,6 +10,7 @@ import { ArrowLeft, ArrowRight, Calendar, Check, Minus, Plus, Users } from "@/co
 import { TLink, enterDelay } from "@/components/shell/Transition";
 import { FloorPlan, ZONES, zoneAllowed } from "./FloorPlan";
 import { rng } from "@/components/art/kit";
+import { nowMs, reservationCode } from "@/lib/ids";
 
 type Phase = "intro" | "form" | "sealing" | "sealed";
 type Day = { iso: string; dow: string; d: number; mon: string; full: boolean; few: boolean };
@@ -55,7 +56,7 @@ export function Reserve() {
   const [days, setDays] = useState<Day[]>([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [seat, setSeat] = useState("main");
+  const [seatPick, setSeat] = useState("main");
   const [form, setForm] = useState({ name: "", phone: "", email: "", notes: "" });
   const [occasion, setOccasion] = useState("Just hungry");
   const [err, setErr] = useState<Record<string, string>>({});
@@ -69,8 +70,9 @@ export function Reserve() {
 
   /* dates are generated on the client so they're always "from today" */
   useEffect(() => {
+    const id = requestAnimationFrame(() => {
     const out: Day[] = [];
-    const now = new Date();
+    const now = new Date(nowMs());
     for (let i = 0; i < 21; i++) {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
       const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -79,6 +81,8 @@ export function Reserve() {
     }
     setDays(out);
     setDate(out[0].iso);
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
 
   /* intro: the envelope opens itself, then the letter becomes the form */
@@ -117,7 +121,9 @@ export function Reserve() {
     const r = hash(`${date}|${t}`);
     return { full: r < 0.22, last: r > 0.82 };
   };
-  const zone = ZONES.find((z) => z.id === seat)!;
+  const picked = ZONES.find((z) => z.id === seatPick)!;
+  const zone = zoneAllowed(picked, guests) ? picked : (ZONES.find((z) => zoneAllowed(z, guests)) ?? picked);
+  const seat = zone.id;
 
   const canNext = () => {
     if (step === 1) return !!date && !day?.full;
@@ -137,10 +143,6 @@ export function Reserve() {
     setStep((s) => Math.max(0, s - 1));
   };
 
-  useEffect(() => {
-    // keep the chosen seat valid as the party size changes
-    if (!zoneAllowed(zone, guests)) setSeat(ZONES.find((z) => zoneAllowed(z, guests))?.id ?? "main");
-  }, [guests, zone]);
 
   const seal = async () => {
     const e: Record<string, string> = {};
@@ -151,27 +153,12 @@ export function Reserve() {
       gsap.fromTo(card.current, { x: -10 }, { x: 0, duration: 0.6, ease: "elastic.out(1, 0.3)" });
       return;
     }
-    const c = `ÀDÙN-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    const c = reservationCode();
     setCode(c);
     save({ code: c, guests, date, time, seat: zone.name, name: form.name.trim(), occasion });
     if (!reducedMotion()) await gsap.to(card.current, { y: 160, scale: 0.4, rotate: 6, autoAlpha: 0, duration: 0.55, ease: "power3.in" });
     setPhase("sealing");
   };
-
-  useLayoutEffect(() => {
-    if (phase !== "sealing") return;
-    env2.current?.setOpen();
-    const run = async () => {
-      if (!reducedMotion()) {
-        gsap.fromTo(".rs-seal-wrap", { y: 60, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5 });
-        await new Promise((r) => setTimeout(r, 650));
-        await env2.current?.close();
-        burst();
-      }
-      setPhase("sealed");
-    };
-    run();
-  }, [phase]);
 
   const burst = () => {
     const host = root.current?.querySelector(".rs-burst");
@@ -190,6 +177,22 @@ export function Reserve() {
       onComplete: () => petals.forEach((p) => p.remove()),
     });
   };
+
+  useLayoutEffect(() => {
+    if (phase !== "sealing") return;
+    env2.current?.setOpen();
+    const run = async () => {
+      if (!reducedMotion()) {
+        gsap.fromTo(".rs-seal-wrap", { y: 60, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5 });
+        await new Promise((r) => setTimeout(r, 650));
+        await env2.current?.close();
+        burst();
+      }
+      setPhase("sealed");
+    };
+    run();
+  }, [phase]);
+
 
   const when = day && time ? `${new Date(`${date}T${time}`).toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long" })} at ${time}` : "";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { BeltKind, Opts } from "./menu";
@@ -113,11 +113,9 @@ export const cartSubtotal = (cart: CartLine[]) => cart.reduce((n, l) => n + l.qt
 
 /** True once the persisted cart/order has been restored from localStorage. */
 export function useStoreHydrated() {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => {
-    const unsub = useStore.persist.onFinishHydration(() => setHydrated(true));
-    if (useStore.persist.hasHydrated()) setHydrated(true);
-    return unsub;
-  }, []);
-  return hydrated;
+  return useSyncExternalStore(
+    (cb) => useStore.persist.onFinishHydration(cb),
+    () => useStore.persist.hasHydrated(),
+    () => false,
+  );
 }
