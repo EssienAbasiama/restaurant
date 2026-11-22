@@ -9,6 +9,7 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { CustomEase } from "gsap/CustomEase";
 import { SplitText } from "gsap/SplitText";
+import { Physics2DPlugin } from "gsap/Physics2DPlugin";
 import { useGSAP } from "@gsap/react";
 
 if (typeof window !== "undefined") {
@@ -21,6 +22,7 @@ if (typeof window !== "undefined") {
     DrawSVGPlugin,
     CustomEase,
     SplitText,
+    Physics2DPlugin,
     useGSAP,
   );
   gsap.defaults({ ease: "power3.out", duration: 0.6 });

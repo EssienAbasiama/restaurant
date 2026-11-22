@@ -135,7 +135,9 @@ export function JollofArt({ u, o }: DishProps) {
       </g>
 
       <Heat u={u} level={heat} cx={170} cy={214} r={84} seed={41} />
-      <Specks x={170} y={210} r={90} n={10} colors={["#2E5B2A", "#4E8A3A"]} seed={R() * 100} size={[1, 1.8]} />
+      <g data-stage="4">
+        <Specks x={170} y={210} r={90} n={10} colors={["#2E5B2A", "#4E8A3A"]} seed={R() * 100} size={[1, 1.8]} />
+      </g>
     </>
   );
 }

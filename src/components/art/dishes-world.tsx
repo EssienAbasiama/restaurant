@@ -132,7 +132,11 @@ export function RamenArt({ u, o }: DishProps) {
           </g>
         )}
       </g>
-      {heat > 0 && <Specks x={200} y={210} r={150} n={heat * 22} colors={["#E2481E", "#C3301E"]} seed={33} size={[1.4, 4]} />}
+      {heat > 0 && (
+        <g data-stage="5">
+          <Specks x={200} y={210} r={150} n={heat * 22} colors={["#E2481E", "#C3301E"]} seed={33} size={[1.4, 4]} />
+        </g>
+      )}
 
       <circle cx="200" cy="200" r="168" fill={`url(#${u}-inner-shadow)`} />
     </>
@@ -308,7 +312,11 @@ export function PizzaArt({ u, o }: DishProps) {
             </>
           )}
         </g>
-        {heat > 0 && <Specks x={200} y={200} r={140} n={heat * 30} colors={["#C3301E", "#8E1F12", "#E2621B"]} seed={18} size={[0.8, 2]} />}
+        {heat > 0 && (
+          <g data-stage="5">
+            <Specks x={200} y={200} r={140} n={heat * 30} colors={["#C3301E", "#8E1F12", "#E2621B"]} seed={18} size={[0.8, 2]} />
+          </g>
+        )}
       </g>
     </>
   );
