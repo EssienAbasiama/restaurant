@@ -2,6 +2,10 @@ import { Hero } from "@/components/home/Hero";
 import { Marquee } from "@/components/home/Marquee";
 import { Manifesto } from "@/components/home/Manifesto";
 import { BuildAPlate } from "@/components/home/BuildAPlate";
+import { Craft } from "@/components/home/Craft";
+import { Gallery } from "@/components/home/Gallery";
+import { Reviews } from "@/components/home/Reviews";
+import { Visit } from "@/components/home/Visit";
 import { Footer } from "@/components/shell/Footer";
 
 export default function Home() {
@@ -11,7 +15,10 @@ export default function Home() {
       <Marquee />
       <Manifesto />
       <BuildAPlate />
-      <div className="h-screen" />
+      <Craft />
+      <Gallery />
+      <Reviews />
+      <Visit />
       <Footer />
     </main>
   );

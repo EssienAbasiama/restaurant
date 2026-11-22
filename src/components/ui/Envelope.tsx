@@ -52,6 +52,7 @@ type Props = {
   interactive?: boolean;
   className?: string;
   letter?: React.ReactNode;
+  light?: boolean;
 };
 
 /**
@@ -59,7 +60,7 @@ type Props = {
  * click cracks the seal, opens the flap and slides the invitation out.
  */
 export const Envelope = forwardRef<EnvelopeHandle, Props>(function Envelope(
-  { width = 200, title = "Find a table", sub = "Reservations", onOpen, interactive = true, className, letter },
+  { width = 200, title = "Find a table", sub = "Reservations", onOpen, interactive = true, className, letter, light },
   ref,
 ) {
   const root = useRef<HTMLDivElement>(null);
@@ -181,8 +182,8 @@ export const Envelope = forwardRef<EnvelopeHandle, Props>(function Envelope(
       </div>
       {interactive && (
         <span className="absolute -bottom-9 left-0 right-0 text-center">
-          <span className="eyebrow block text-[0.62rem] text-ink-3">{sub}</span>
-          <span className="display text-lg leading-tight text-ink">{title}</span>
+          <span className={`eyebrow block text-[0.62rem] ${light ? "text-paper/60" : "text-ink-3"}`}>{sub}</span>
+          <span className={`display text-lg leading-tight ${light ? "text-paper" : "text-ink"}`}>{title}</span>
         </span>
       )}
     </Wrapper>
