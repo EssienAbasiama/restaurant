@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useRef } from "react";
+import { createContext, useContext, useRef } from "react";
 import { gsap, ScrollTrigger, reducedMotion } from "@/lib/gsap";
 import { getLenis, scrollToTarget } from "./SmoothScroll";
 import { site } from "@/lib/site";
@@ -33,43 +33,8 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
   const pending = useRef<string | null>(null);
   const busy = useRef(false);
 
-  const go = useCallback(
-    (href: string) => {
-      const url = new URL(href, window.location.href);
-      if (url.pathname === window.location.pathname) {
-        if (url.hash) scrollToTarget(url.hash);
-        else scrollToTarget(0);
-        return;
-      }
-      if (busy.current) return;
-      if (reducedMotion() || !curtain.current) {
-        router.push(href);
-        return;
-      }
-      busy.current = true;
-      pending.current = url.pathname;
-      const el = curtain.current;
-      const panels = el.querySelectorAll(".cpanel");
-      gsap.killTweensOf(panels);
-      gsap.set(el, { visibility: "visible" });
-      const tl = gsap.timeline({
-        onComplete: () => {
-          (window as unknown as { __adunNav?: number }).__adunNav = performance.now();
-          router.push(href);
-        },
-      });
-      tl.fromTo(panels, { yPercent: -101 }, { yPercent: 0, duration: 0.6, ease: "power3.inOut", stagger: 0.045 });
-      tl.fromTo(el.querySelector(".clabel"), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.35 }, "-=0.25");
-      // safety: never leave the curtain stuck
-      window.setTimeout(() => {
-        if (busy.current && pending.current) reveal();
-      }, 4500);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router],
-  );
-
-  const reveal = useCallback(() => {
+  /** Lift the curtain once the next route has rendered. */
+  const reveal = () => {
     const el = curtain.current;
     if (!el) return;
     pending.current = null;
@@ -87,11 +52,44 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       })
       .to(el.querySelector(".clabel"), { autoAlpha: 0, y: -16, duration: 0.25 })
       .to(panels, { yPercent: 101, duration: 0.7, ease: "power3.inOut", stagger: 0.05 }, "<");
-  }, []);
+  };
 
-  const onRoute = useCallback(() => {
+  /** Drop the woven curtain, then navigate. */
+  const go = (href: string) => {
+    const url = new URL(href, window.location.href);
+    if (url.pathname === window.location.pathname) {
+      if (url.hash) scrollToTarget(url.hash);
+      else scrollToTarget(0);
+      return;
+    }
+    if (busy.current) return;
+    if (reducedMotion() || !curtain.current) {
+      router.push(href);
+      return;
+    }
+    busy.current = true;
+    pending.current = url.pathname;
+    const el = curtain.current;
+    const panels = el.querySelectorAll(".cpanel");
+    gsap.killTweensOf(panels);
+    gsap.set(el, { visibility: "visible" });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        (window as unknown as { __adunNav?: number }).__adunNav = performance.now();
+        router.push(href);
+      },
+    });
+    tl.fromTo(panels, { yPercent: -101 }, { yPercent: 0, duration: 0.6, ease: "power3.inOut", stagger: 0.045 });
+    tl.fromTo(el.querySelector(".clabel"), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.35 }, "-=0.25");
+    // safety: never leave the curtain stuck
+    window.setTimeout(() => {
+      if (busy.current && pending.current) reveal();
+    }, 4500);
+  };
+
+  const onRoute = () => {
     if (pending.current) reveal();
-  }, [reveal]);
+  };
 
   return (
     <TransitionCtx.Provider value={{ go }}>

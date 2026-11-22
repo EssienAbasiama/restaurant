@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { cartCount, useStore } from "@/lib/store";
 import { img } from "@/lib/images";
@@ -48,9 +48,9 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [open]);
 
-  const onRoute = useCallback(() => {
+  const onRoute = () => {
     gsap.set(header.current, { yPercent: 0 });
-  }, []);
+  };
 
   useEffect(() => {
     const el = overlay.current;

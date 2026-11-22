@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { nowMs, orderId } from "@/lib/ids";
 import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
 import { cartSubtotal, useStore, useStoreHydrated, type Order } from "@/lib/store";
 import { menuById, type MenuItem } from "@/lib/menu";
@@ -79,17 +80,20 @@ export function Checkout() {
   const [placing, setPlacing] = useState(false);
   const toggle = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const now = new Date();
-    const list = [{ id: "asap", label: "ASAP · ~20 min" }];
-    const start = new Date(now);
-    start.setMinutes(Math.ceil((now.getMinutes() + 35) / 15) * 15, 0, 0);
-    for (let i = 0; i < 6; i++) {
-      const t = new Date(start.getTime() + i * 15 * 60000);
-      list.push({ id: t.toISOString(), label: t.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" }) });
+  const chooseMode = (m: "delivery" | "pickup") => {
+    setMode(m);
+    if (m === "pickup" && slots.length === 0) {
+      const now = new Date(nowMs());
+      const list = [{ id: "asap", label: "ASAP · ~20 min" }];
+      const start = new Date(now);
+      start.setMinutes(Math.ceil((now.getMinutes() + 35) / 15) * 15, 0, 0);
+      for (let i = 0; i < 6; i++) {
+        const t = new Date(start.getTime() + i * 15 * 60000);
+        list.push({ id: t.toISOString(), label: t.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" }) });
+      }
+      setSlots(list);
     }
-    setSlots(list);
-  }, []);
+  };
 
   useLayoutEffect(() => {
     const pill = toggle.current?.querySelector<HTMLElement>(".mode-pill");
@@ -148,14 +152,14 @@ export function Checkout() {
     setPlacing(true);
     await new Promise((r) => setTimeout(r, reducedMotion() ? 200 : 1600));
     const order: Order = {
-      id: `ÀD-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: orderId(),
       lines: cart,
       total,
       mode,
       name: form.name.trim().split(" ")[0],
       area: mode === "delivery" ? a.label : undefined,
       eta: mode === "delivery" ? a.eta : 20,
-      placedAt: Date.now(),
+      placedAt: nowMs(),
     };
     placeOrder(order);
     go("/order");
@@ -210,7 +214,7 @@ export function Checkout() {
             <div ref={toggle} role="radiogroup" aria-label="Delivery or pickup" className="relative inline-flex rounded-full bg-ink/[0.06] p-1">
               <span className="mode-pill absolute bottom-1 left-1 top-1 rounded-full bg-ink" />
               {(["delivery", "pickup"] as const).map((m) => (
-                <button key={m} type="button" role="radio" aria-checked={mode === m} data-mode={m} onClick={() => setMode(m)} className={`relative z-[1] flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold capitalize transition-colors ${mode === m ? "text-paper" : "text-ink-2"}`}>
+                <button key={m} type="button" role="radio" aria-checked={mode === m} data-mode={m} onClick={() => chooseMode(m)} className={`relative z-[1] flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold capitalize transition-colors ${mode === m ? "text-paper" : "text-ink-2"}`}>
                   {m === "delivery" ? <Scooter size={17} /> : <Bag size={17} />} {m}
                 </button>
               ))}

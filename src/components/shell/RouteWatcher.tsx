@@ -1,13 +1,17 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 
 function Watcher({ onChange }: { onChange: (pathname: string) => void }) {
   const pathname = usePathname();
+  const cb = useRef(onChange);
   useEffect(() => {
-    onChange(pathname);
-  }, [pathname, onChange]);
+    cb.current = onChange;
+  });
+  useEffect(() => {
+    cb.current(pathname);
+  }, [pathname]);
   return null;
 }
 
